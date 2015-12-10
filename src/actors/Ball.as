@@ -1,4 +1,4 @@
-package actors 
+﻿package actors 
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -14,8 +14,14 @@ package actors
 	public class Ball extends MovieClip 
 	{
 		private var _movement:Point;
+		private var maxSpeed:Number;
+		private var isBig:Boolean = true;
+		private var grootBalletje:MonsterArt = new MonsterArt();
+		private var kleinBalletje:MiniBallArt = new MiniBallArt();
+		private var t:Timer =  new Timer(5000);
 		public static const OUTSIDE_RIGHT:String = "outside right";
 		public static const OUTSIDE_LEFT:String = "outside left";
+		
 		public function set movement(m:Point):void
 		{
 			_movement = m;
@@ -29,20 +35,52 @@ package actors
 			_movement.x = move;
 			
 		}
-		public function Ball() 
+		public function get yMove():Number
+		{
+			return _movement.y;			
+		}
+		public function set yMove(move:Number):void
+		{
+			_movement.y = move;
+			
+		}
+		public function Ball(waarde:Number) 	//Opdr Getters en Setters
 		{
 			addEventListener(Event.ADDED_TO_STAGE, init);
-			
+			maxSpeed = waarde;					//Opdr Getters en Setters
 			
 		}
 		
 		private function init(e:Event):void 
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
-			addChild(new BallArt());
+			addChild(grootBalletje);
 			movement = new Point(0, 0);
 			this.addEventListener(Event.ENTER_FRAME, loop);
 		}
+		
+		private function onTime(e:TimerEvent):void {
+			changeSize();
+		}
+		
+		public function changeSize():void {			//HIEROOOOOO
+			if(isBig) {
+				//make small
+				removeChild(grootBalletje);
+				addChild(kleinBalletje);
+				t.repeatCount = 1;
+				t.addEventListener(TimerEvent.TIMER, onTime);
+				t.start();
+				isBig = false;
+			} else {
+				t.stop();
+				t.removeEventListener(TimerEvent.TIMER, onTime);
+				removeChild(kleinBalletje);
+				addChild(grootBalletje);
+				isBig = true;
+			}
+		}
+		
 		public function reset():void
 		{
 			this.x = stage.stageWidth / 2;
@@ -55,7 +93,7 @@ package actors
 		
 		private function restart(e:TimerEvent):void 
 		{
-			_movement = MovementCalculator.calculateMovement(15 + Math.random() * 10, Math.random() * 360);
+			_movement = MovementCalculator.calculateMovement(1 + Math.random() * maxSpeed /*Opdr Getters en Setters*/, Math.random() * 360); 		//snelheid balletjes
 			if (_movement.x > 0 && _movement.x < 2) _movement.x += 2;
 			if (_movement.x < 0 && _movement.x > -2) _movement.x -= 2;
 		}
@@ -64,8 +102,9 @@ package actors
 			this.x += _movement.x;
 			this.y += _movement.y;
 			
-			if (this.y <= 0 || this.y >= stage.stageHeight)
+			if (this.y < 0 || this.y > stage.stageHeight)
 			{
+				//this.y < 0?this.x = 0:this.x = stage.stageHeight;
 				_movement.y *= -1;
 				
 			}

@@ -10,6 +10,7 @@ package actors
 	{
 		private var controller:Controller;
 		private var speed:Number = 0;
+		private var maxSpeed:Number = 10;
 		
 		public function Player() 
 		{
@@ -25,11 +26,11 @@ package actors
 		{
 			if (controller.up)
 			{
-				speed = -15;
+				speed = -17;
 			}
 			else if(controller.down)
 			{
-				speed = 15;
+				speed = 17;
 			}else
 			{
 				if (speed > 0) speed--;
@@ -41,7 +42,32 @@ package actors
 				
 				
 			}
+			if (this.y < 0) this.y = 0;
+			if (this.y > stage.stageHeight) this.y = stage.stageHeight;
+
 			this.y += speed;
+			
+			
+		}
+		public function destroy():void
+		{
+			this.removeEventListener(Event.ENTER_FRAME, loop);	
+			
+		}
+		
+		//Opdr Getters en Setters
+		public function setMaxSpeed(waarde:Number):void {
+			if (waarde > 30){
+				trace ("maxspeed cannot be more than 30!");
+				maxSpeed = 30;
+				return;
+			}
+			maxSpeed = waarde;
+		}
+		
+		//Opdr Getters en Setters
+		public function getMaxSpeed():Number{
+			return maxSpeed;
 		}
 		
 	}

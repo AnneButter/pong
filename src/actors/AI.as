@@ -1,4 +1,4 @@
-package actors 
+﻿package actors 
 {
 	import flash.events.Event;
 	
@@ -28,13 +28,19 @@ package actors
 		}
 		private function getTarget():void
 		{
-			if (_target == null)_target = _balls[0];
+ 			if (_target == null)_target = _balls[0];
 			if(_balls.length>1){
 				var closest:Ball = _balls[0];
 				for (var i:int = 1; i < _balls.length; i++) 
 				{
-					var d:Number = _balls[i-1].x - _balls[i].x;
-					if (d < 0) closest = _balls[i];
+						
+					/*
+ 					var d:Number = _balls[i-1].x - _balls[i].x;
+ 					if (d < 0) closest = _balls[i];
+					*/
+					var d:Number = Math.abs(this.x - _balls[i].x);
+					var lastD:Number = Math.abs(this.x - closest.x);
+					if (d < lastD) closest = _balls[i];
 				}
 				_target = closest;
 			}
@@ -49,6 +55,10 @@ package actors
 				else _speed = 0;
 				this.y += _speed;
 			}
+		}	
+		public function destroy():void
+		{
+			this.addEventListener(Event.ENTER_FRAME, loop);									
 		}		
 	}
 }
